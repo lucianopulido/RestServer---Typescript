@@ -1,6 +1,7 @@
 import express, {Express} from 'express'
 import cors from 'cors'
 import {UsuarioController} from "../controller/UsuarioController";
+import {db} from "../db/connection";
 
 require('dotenv').config()
 
@@ -14,8 +15,18 @@ export class Server {
     constructor() {
         this.app = express()
         this.port = process.env.PORT || '8080'
+        this.dbConnection()
         this.middleware()
         this.usuarioController = new UsuarioController(this.app)
+    }
+
+    async dbConnection() {
+        try {
+            await db.authenticate()
+            console.log('Database online')
+        } catch (error: any) {
+            throw new Error(error)
+        }
     }
 
     middleware() {
